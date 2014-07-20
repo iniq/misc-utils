@@ -1,0 +1,27 @@
+#!/bin/bash
+
+## Convert a given .mkv file into an .mp4 through FFmpeg.
+## My PS3/Twonky setup doesn't currently like .mkv files
+## ffmpeg must be in path
+
+if [ -z "$1" ]; then
+	echo "Specify a file or directory. (for current directory, use '.')"
+	exit 0
+fi
+
+## If a directory, recurse. If a file, process.
+if [[ -d "$1" ]]; then
+	for mkvFile in *.mkv ; do mkvconvert "$mkvFile" ; done
+else
+	inFile="$1"
+
+	## Optionally provide a filename as param 2
+	if [ -z "$2" ]; then
+		outFile="${inFile%.mkv}.mp4"
+	else
+		outFile="$2"
+	fi
+
+	## Run it with best settings
+	ffmpeg -i "$inFile" -c:v copy -c:a copy "$outFile"
+fi
